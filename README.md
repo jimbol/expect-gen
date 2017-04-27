@@ -1,28 +1,25 @@
-- [ ] Tests
-- [ ] Docs
-
 # Expect Gen
-As in "expect generator to...". An assertion / snapshot library for testing [iterators and generators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators).  It was designed for, and works particularly well with, [redux-saga](https://github.com/redux-saga/redux-saga).
+As in "expect generator...". An assertion / snapshot library for testing [iterators and generators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators).  It was designed for, and works particularly well with, [redux-saga](https://github.com/redux-saga/redux-saga) but can be used for anything that uses generators.
 
 ## Example
 ```es6
 function* myEffect(fakeAction) {
-  const threadIds = yield select(threadIds);
-  yield put(threadsLoading());
+  const fooIds = yield select(fooIds);
+  yield put(foosLoading());
   const results = yield call(apiFetch, options);
 }
 
-import { expectGen } from 'expect-gen';
+import expectGen from 'expect-gen';
 
-it('runs effect with fakeThreadIds and fakeResults', () => {
+it('runs effect with fakeFooIds and fakeResults', () => {
   expectGen(myEffect, fakeAction)
-    // asserts step yields first `select(threadIds)`
+    // asserts step yields first `select(fooIds)`
     .yields(
-      select(threadIds),
-      fakeThreadIds
+      select(fooIds),
+      fakeFooIds
     )
     .yields(
-      put(threadsLoading())
+      put(foosLoading())
     )
     .yields(
       call(apiFetch, options),
@@ -32,10 +29,10 @@ it('runs effect with fakeThreadIds and fakeResults', () => {
     .run();
 });
 
-it('runs effect with fakeThreadIds and fakeResults', () => {
+it('runs effect with fakeFooIds and fakeResults', () => {
   const snapshot = expectGen(myEffect, fakeAction)
     // Doesn't run assertion for `next`
-    .next(fakeThreadIds)
+    .next(fakeFooIds)
     .next()
     .yields(
       call(apiFetch, options),
