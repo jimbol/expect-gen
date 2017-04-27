@@ -16,12 +16,12 @@
   },
   "keywords": [
     "generators",
-    "testing-generators",
+    "generator-testing",
     "redux-saga",
-    "testing-redux-sagas",
-    "testing-effects",
+    "redux-saga-testing",
     "testing-sagas",
     "unit-testing",
+    "snapshot-testing",
     "testing"
   ],
   "author": "Jim Hall",
