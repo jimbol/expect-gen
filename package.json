@@ -1,4 +1,7 @@
 {
+  "name": "expect-gen",
+  "version": "0.1.0",
+  "description": "Assertion library for unit testing JS generators. Works well with redux-saga. Allows snapshot testing.",
   "devDependencies": {
     "assert-diff": "^1.2.0",
     "jest": "^19.0.2",
@@ -6,5 +9,24 @@
   },
   "scripts": {
     "test": "jest"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jimbol/expect-gen"
+  },
+  "keywords": [
+    "generators",
+    "testing-generators",
+    "redux-saga",
+    "testing-redux-sagas",
+    "testing-effects",
+    "testing-sagas",
+    "unit-testing",
+    "testing"
+  ],
+  "author": "Jim Hall",
+  "contributors": [
+    "Eric Bower"
+  ],
+  "license": "MIT"
 }
