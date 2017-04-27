@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "assert-diff": "^1.2.0",
+    "jest": "^19.0.2",
+    "redux-saga": "^0.14.3"
+  },
+  "scripts": {
+    "test": "jest"
+  }
+}
