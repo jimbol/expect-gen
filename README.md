@@ -39,7 +39,7 @@ it('runs effect with fakeFooIds and fakeResults', () => {
       fakeResults
     )
     .finishes()
-    .run();
+    .toJSON();
 
   expect(snapshot).toMatchSnapshot();
 });
@@ -89,4 +89,12 @@ expectGen(generator, [...args])
   .run()
 ```
 - Executes all assertions
-- Returns snapshot of all generator steps
+- Returns results of all generator steps as an array
+
+### toJSON
+```es6
+expectGen(generator, [...args])
+  ...
+  .toJSON()
+```
+- Convert results from `run()` into a JSON object

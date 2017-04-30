@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshot test creates a snapshot 1`] = `
+Array [
+  Object {
+    "done": false,
+    "value": Object {
+      "PUT": Object {
+        "action": Object {
+          "type": "LOADING",
+        },
+        "channel": null,
+      },
+    },
+  },
+  Object {
+    "done": true,
+  },
+]
+`;
