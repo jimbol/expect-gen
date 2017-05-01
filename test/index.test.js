@@ -1,4 +1,4 @@
-const { put } = require('redux-saga');
+const { put } = require('redux-saga/effects');
 const assert = require('assert');
 const expectGen = require('../index');
 const StepManager = require('../step-manager');
@@ -18,5 +18,16 @@ describe('#expectGen', () => {
   it('creates StepManager', () => {
     expect(expectGen(myEffect))
       .toBeInstanceOf(StepManager);
+  });
+});
+
+describe('Snapshot test', () => {
+  it('creates a snapshot', () => {
+    const snapshot = expectGen(myEffect)
+      .next()
+      .finishes()
+      .toJSON();
+
+    expect(snapshot).toMatchSnapshot();
   });
 });

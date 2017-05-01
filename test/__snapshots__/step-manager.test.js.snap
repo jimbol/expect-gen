@@ -1,11 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`StepManager #yields when it wont pass throws on run 1`] = `
-"{ '@@redux-saga/IO': true,
-  PUT: 
+"{ PUT: 
    { channel: null,
-     action: { payload: [Object], type: 'LOADING' } } } deepEqual { '@@redux-saga/IO': true,
-  PUT: { channel: null, action: { payload: [], type: 'LOADING' } } }[m
+     action: { payload: [Object], type: 'LOADING' } } } deepEqual { PUT: { channel: null, action: { payload: [], type: 'LOADING' } } }[m
  {
    PUT: {
      action: {

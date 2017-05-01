@@ -39,6 +39,10 @@ module.exports = class StepManager {
     const runner = new Runner(it, this.steps);
     return runner.run();
   }
+
+  toJSON(context = null) {
+    return JSON.parse(JSON.stringify(this.run(context)));
+  }
 }
 
 class Runner {
