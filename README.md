@@ -16,6 +16,7 @@ it('runs effect with fakeFooIds and fakeResults', () => {
     // asserts step yields first `select(fooIds)`
     .yields(
       select(fooIds),
+      // `fakeFooIds` gets pass into the following `next`
       fakeFooIds
     )
     .yields(
