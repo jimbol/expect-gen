@@ -99,3 +99,7 @@ expectGen(generator, [...args])
   .toJSON()
 ```
 - Convert results from `run()` into a JSON object
+
+## Previous Version
+Expect Gen is a second generation version of [generator-test-runner](https://github.com/jimbol/generator-test-runner).  Many of the concepts used here originated there.
+
