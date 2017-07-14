@@ -81,7 +81,7 @@ expectGen(generator, [...args])
   .finishes([result])
 ```
 - Asserts that generator finishes with `result`
-- Returns same object with `run` method
+- Returns same instance `StepManager`
 
 ### run
 ```es6
