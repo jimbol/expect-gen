@@ -11,21 +11,22 @@ module.exports = class StepManager {
     this.steps = [];
   }
 
-  yields(expectedValue, result) {
+  yields(expectedValue, result, message = 'yields') {
     this.steps.push({
       expectedValue,
       result,
+      message,
     });
 
     return this;
   }
 
-  next(result) {
-    this.steps.push({ result });
+  next(result, message = 'next') {
+    this.steps.push({ result, message });
     return this;
   }
 
-  finishes(expectedValue) {
+  finishes(expectedValue, message = 'finishes') {
     this.steps.push({
       expectedDone: true,
       expectedValue,
@@ -62,16 +63,19 @@ class Runner {
       const output = it.next(prevResult);
 
       if (step.expectedDone) {
-        assert.equal(output.done, true);
+        if (output.done !== true) throwExpectFinish(step);
       }
 
       if (step.expectedValue) {
-        assert.deepEqual(output.value, step.expectedValue);
+        assert.deepEqual(output.value, step.expectedValue, step.message);
       }
 
       if (output.done) this.isDone = true;
 
-      this.results.push(output);
+      // TODO replace functions with a symbol containing its name
+      const finalOutput = Object.assign({}, output, { message: step.message});
+      this.results.push(finalOutput);
+
       return step.result;
     }, null);
 
@@ -79,9 +83,25 @@ class Runner {
   }
 }
 
+const addMessage = (str, step) => {
+  if (step.message) return `${step.message}: ${str}`;
+  return str;
+}
+
+const throwExpectFinish = (step) => {
+  throw new Error({
+    message: addMessage(
+      'Expected the generator to finish but it has more step(s) left.',
+      step
+    ),
+  });
+};
+
 const throwExtraStep = (step) => {
   throw new Error({
-    message: 'Too many steps were provided for the generator',
-    failedOnStep: step,
+    message: addMessage(
+      'Too many steps were provided for the generator',
+      step,
+    ),
   });
 };
