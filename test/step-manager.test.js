@@ -94,6 +94,42 @@ describe('StepManager', () => {
     });
   });
 
+  describe.only('#catches', () => {
+    let errEffect;
+    let myError;
+    let myIds;
+    beforeEach(() => {
+      errEffect = function* (ids) {
+        let val;
+        console.log('hi');
+        try {
+          console.log('try');
+          yield ids;
+        } catch (e) {
+          console.log('Caught:', e);
+        }
+
+        return 'THE_END';
+      }
+
+      myIds = [1, 2, 3];
+      args = [myIds];
+      myError = new Error('My error');
+      stepManager = new StepManager(errEffect, args)
+        .catches(myError, myIds);
+    });
+    //
+    // it('stores expectedValue', () => {
+    //   expect(stepManager.steps.length).toEqual(1);
+    //   expect(stepManager.steps[0].error).toBe(myError);
+    //   expect(stepManager.steps[0].expectedValue).toBe(myIds);
+    // });
+
+    it('passes result into generator', () => {
+      stepManager.finishes('THE_END').run();
+    });
+  });
+
   describe('#finishes', () => {
     beforeEach(() => {
       ids = [1, 2, 3];
