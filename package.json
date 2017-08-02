@@ -10,7 +10,8 @@
     "assert-diff": "^1.2.0"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "test-watch": "jest --watch"
   },
   "repository": {
     "type": "git",

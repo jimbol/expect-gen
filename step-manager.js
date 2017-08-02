@@ -38,6 +38,16 @@ module.exports = class StepManager {
     return this;
   }
 
+  catchesAndFinishes(error, expectedValue) {
+    this.steps.push({
+      error,
+      expectedValue,
+      expectedDone: true,
+    });
+
+    return this;
+  }
+
   next(result) {
     this.steps.push({ result });
     return this;

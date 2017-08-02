@@ -94,41 +94,94 @@ describe('StepManager', () => {
     });
   });
 
-  describe.only('#catches', () => {
-    let errEffect;
-    let myError;
-    let myIds;
-    beforeEach(() => {
-      errEffect = function* (ids) {
-        let val;
-        console.log('hi');
-        try {
-          console.log('try');
-          yield ids;
-        } catch (e) {
-          console.log('Caught:', e);
-        }
-
-        return 'THE_END';
+  describe('Errors', () => {
+    const errEffect = function* (ids) {
+      let val;
+      try {
+        yield ids;
+      } catch (e) {
+        yield 'CAUGHT';
       }
 
+      return 'THE_END';
+    };
+
+    let myError;
+    let myIds;
+
+    beforeEach(() => {
       myIds = [1, 2, 3];
       args = [myIds];
       myError = new Error('My error');
-      stepManager = new StepManager(errEffect, args)
-        .catches(myError, myIds);
     });
-    //
-    // it('stores expectedValue', () => {
-    //   expect(stepManager.steps.length).toEqual(1);
-    //   expect(stepManager.steps[0].error).toBe(myError);
-    //   expect(stepManager.steps[0].expectedValue).toBe(myIds);
-    // });
 
-    it('passes result into generator', () => {
-      stepManager.finishes('THE_END').run();
+    describe('#catches', () => {
+      beforeEach(() => {
+        stepManager = new StepManager(errEffect, args)
+          .next()
+          .catches(myError, 'CAUGHT');
+      });
+
+      it('stores expectedValue', () => {
+        expect(stepManager.steps.length).toEqual(2);
+        expect(stepManager.steps[1].error).toBe(myError);
+        expect(stepManager.steps[1].expectedValue).toBe('CAUGHT');
+      });
+
+      it('passes result into generator', () => {
+        stepManager.finishes('THE_END').run();
+      });
+    });
+
+    describe('#catchesAndFinishes', () => {
+      const errFinishEffect = function* (ids) {
+        let val;
+        try {
+          yield ids;
+        } catch (e) {
+          return 'CAUGHT';
+        }
+
+        return 'THE_END';
+      };
+
+      beforeEach(() => {
+        stepManager = new StepManager(errFinishEffect, args)
+          .next()
+          .catchesAndFinishes(myError, 'CAUGHT');
+      });
+
+      it('stores expectedValue', () => {
+        expect(stepManager.steps.length).toEqual(2);
+        expect(stepManager.steps[1].error).toBe(myError);
+        expect(stepManager.steps[1].expectedValue).toBe('CAUGHT');
+      });
+
+      it('passes result into generator', () => {
+        stepManager.run();
+      });
+    });
+
+    describe('#throws', () => {
+      beforeEach(() => {
+        stepManager = new StepManager(myEffect, args)
+          .next()
+          .throws(myError);
+      });
+
+      it('stores expectedValue', () => {
+        expect(stepManager.steps.length).toEqual(2);
+        expect(stepManager.steps[1].error).toBe(myError);
+        expect(stepManager.steps[1].expectedThrow).toBe(true);
+      });
+
+      it('passes result into generator', () => {
+        stepManager.run();
+      });
     });
   });
+
+
 
   describe('#finishes', () => {
     beforeEach(() => {
