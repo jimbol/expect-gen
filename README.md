@@ -74,6 +74,33 @@ expectGen(generator, [...args])
 - Makes no assertion
 - Returns same instance `StepManager`
 
+### throws
+```es6
+expectGen(generator, [...args])
+  .throws(error)
+```
+- Throws `error` into generator
+- Checks that iterator throws an uncaught exception
+- Returns same instance `StepManager`
+
+### catches
+```es6
+expectGen(generator, [...args])
+  .catches(error, [expectedValue])
+```
+- Throws `error` into generator
+- Runs an assertion that thrown iterator will yield the `expectedValue`
+- Returns same instance `StepManager`
+
+### catchesAndFinishes
+```es6
+expectGen(generator, [...args])
+  .catchesAndFinishes(error, [result])
+```
+- Throws `error` into generator
+- Asserts that generator finishes with `result`
+- Returns same instance `StepManager`
+
 ### finishes
 ```es6
 expectGen(generator, [...args])
