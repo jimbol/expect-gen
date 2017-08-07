@@ -13,8 +13,36 @@ module.exports = class StepManager {
 
   yields(expectedValue, result) {
     this.steps.push({
-      expectedValue,
       result,
+      expectedValue,
+    });
+
+    return this;
+  }
+
+  catches(error, expectedValue) {
+    this.steps.push({
+      error,
+      expectedValue,
+    });
+
+    return this;
+  }
+
+  throws(error) {
+    this.steps.push({
+      error,
+      expectedThrow: true,
+    });
+
+    return this;
+  }
+
+  catchesAndFinishes(error, expectedValue) {
+    this.steps.push({
+      error,
+      expectedValue,
+      expectedDone: true,
     });
 
     return this;
@@ -27,8 +55,8 @@ module.exports = class StepManager {
 
   finishes(expectedValue) {
     this.steps.push({
-      expectedDone: true,
       expectedValue,
+      expectedDone: true,
     });
 
     return this;
@@ -58,16 +86,9 @@ class Runner {
 
     steps.reduce((prevResult, step) => {
       if (this.isDone) throwExtraStep(step);
+      const output = runStep(it, step, prevResult);
 
-      const output = it.next(prevResult);
-
-      if (step.expectedDone) {
-        assert.equal(output.done, true);
-      }
-
-      if (step.expectedValue) {
-        assert.deepEqual(output.value, step.expectedValue);
-      }
+      runAssertions(step, output);
 
       if (output.done) this.isDone = true;
 
@@ -78,6 +99,36 @@ class Runner {
     return this.results;
   }
 }
+
+const runStep = (it, step, prevResult) => {
+  if (step.error) {
+    try {
+      return it.throw(step.error);
+    } catch (error) {
+      return {
+        errorThrown: error,
+      };
+    }
+  }
+
+  return it.next(prevResult);
+}
+
+const runAssertions = (step, output) => {
+  if (step.expectedThrow) {
+    assert.deepEqual(output.errorThrown, step.error);
+  } else if (output.errorThrown) {
+    throw output.errorThrown;
+  }
+
+  if (step.expectedDone) {
+    assert.equal(output.done, true);
+  }
+
+  if (step.expectedValue) {
+    assert.deepEqual(output.value, step.expectedValue);
+  }
+};
 
 const throwExtraStep = (step) => {
   throw new Error({

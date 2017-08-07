@@ -94,6 +94,95 @@ describe('StepManager', () => {
     });
   });
 
+  describe('Errors', () => {
+    const errEffect = function* (ids) {
+      let val;
+      try {
+        yield ids;
+      } catch (e) {
+        yield 'CAUGHT';
+      }
+
+      return 'THE_END';
+    };
+
+    let myError;
+    let myIds;
+
+    beforeEach(() => {
+      myIds = [1, 2, 3];
+      args = [myIds];
+      myError = new Error('My error');
+    });
+
+    describe('#catches', () => {
+      beforeEach(() => {
+        stepManager = new StepManager(errEffect, args)
+          .next()
+          .catches(myError, 'CAUGHT');
+      });
+
+      it('stores expectedValue', () => {
+        expect(stepManager.steps.length).toEqual(2);
+        expect(stepManager.steps[1].error).toBe(myError);
+        expect(stepManager.steps[1].expectedValue).toBe('CAUGHT');
+      });
+
+      it('passes result into generator', () => {
+        stepManager.finishes('THE_END').run();
+      });
+    });
+
+    describe('#catchesAndFinishes', () => {
+      const errFinishEffect = function* (ids) {
+        let val;
+        try {
+          yield ids;
+        } catch (e) {
+          return 'CAUGHT';
+        }
+
+        return 'THE_END';
+      };
+
+      beforeEach(() => {
+        stepManager = new StepManager(errFinishEffect, args)
+          .next()
+          .catchesAndFinishes(myError, 'CAUGHT');
+      });
+
+      it('stores expectedValue', () => {
+        expect(stepManager.steps.length).toEqual(2);
+        expect(stepManager.steps[1].error).toBe(myError);
+        expect(stepManager.steps[1].expectedValue).toBe('CAUGHT');
+      });
+
+      it('passes result into generator', () => {
+        stepManager.run();
+      });
+    });
+
+    describe('#throws', () => {
+      beforeEach(() => {
+        stepManager = new StepManager(myEffect, args)
+          .next()
+          .throws(myError);
+      });
+
+      it('stores expectedValue', () => {
+        expect(stepManager.steps.length).toEqual(2);
+        expect(stepManager.steps[1].error).toBe(myError);
+        expect(stepManager.steps[1].expectedThrow).toBe(true);
+      });
+
+      it('passes result into generator', () => {
+        stepManager.run();
+      });
+    });
+  });
+
+
+
   describe('#finishes', () => {
     beforeEach(() => {
       ids = [1, 2, 3];
