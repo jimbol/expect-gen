@@ -66,7 +66,7 @@ describe('StepManager', () => {
       });
 
       it('throws on run', () => {
-        expect(() => stepManager.run()).toThrowErrorMatchingSnapshot();
+        expect(() => stepManager.run()).toThrow();
       });
     });
   });
@@ -181,8 +181,6 @@ describe('StepManager', () => {
     });
   });
 
-
-
   describe('#finishes', () => {
     beforeEach(() => {
       ids = [1, 2, 3];
@@ -210,7 +208,7 @@ describe('StepManager', () => {
         .next()
         .next()
         .next();
-      expect(() => stepManager.run()).toThrow();
+      expect(() => stepManager.run()).toThrowErrorMatchingSnapshot();
     });
   });
 });
