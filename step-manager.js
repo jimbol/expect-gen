@@ -1,12 +1,17 @@
-const assert = require('assert-diff');
+const Runner = require('./runner');
 
 module.exports = class StepManager {
-  constructor(generator, args) {
+  constructor({
+    generator,
+    args,
+    deepEqual,
+  }) {
     if (!generator) {
       throw new Error(`ExpectGen requires an generator, passed in ${generator}`);
     }
 
     this.generator = generator;
+    this.deepEqual = deepEqual;
     this.args = args;
     this.steps = [];
   }
@@ -15,6 +20,7 @@ module.exports = class StepManager {
     this.steps.push({
       result,
       expectedValue,
+      stack: getCallStack('yields'),
     });
 
     return this;
@@ -24,6 +30,7 @@ module.exports = class StepManager {
     this.steps.push({
       error,
       expectedValue,
+      stack: getCallStack('catches'),
     });
 
     return this;
@@ -33,6 +40,7 @@ module.exports = class StepManager {
     this.steps.push({
       error,
       expectedThrow: true,
+      stack: getCallStack('throws'),
     });
 
     return this;
@@ -43,13 +51,17 @@ module.exports = class StepManager {
       error,
       expectedValue,
       expectedDone: true,
+      stack: getCallStack('catchesAndFinishes'),
     });
 
     return this;
   }
 
   next(result) {
-    this.steps.push({ result });
+    this.steps.push({
+      result,
+      stack: getCallStack('next'),
+    });
     return this;
   }
 
@@ -57,6 +69,7 @@ module.exports = class StepManager {
     this.steps.push({
       expectedValue,
       expectedDone: true,
+      stack: getCallStack('finishes'),
     });
 
     return this;
@@ -64,7 +77,7 @@ module.exports = class StepManager {
 
   run(context = null) {
     const it = this.generator.apply(context, this.args);
-    const runner = new Runner(it, this.steps);
+    const runner = new Runner(it, this.steps, this.deepEqual);
     return runner.run();
   }
 
@@ -73,66 +86,14 @@ module.exports = class StepManager {
   }
 }
 
-class Runner {
-  constructor(it, steps) {
-    this.it = it;
-    this.steps = steps;
-    this.results = [];
-    this.isDone = false;
-  }
+const getCallStack = (message) => {
+  const err = new Error(message);
+  if (!err || !err.stack) return message;
 
-  run() {
-    const { it, steps } = this;
+  const stack = err.stack
+    .split('\n')
+    .slice(2, 10)
+    .join('\n');
 
-    steps.reduce((prevResult, step) => {
-      if (this.isDone) throwExtraStep(step);
-      const output = runStep(it, step, prevResult);
-
-      runAssertions(step, output);
-
-      if (output.done) this.isDone = true;
-
-      this.results.push(output);
-      return step.result;
-    }, null);
-
-    return this.results;
-  }
+  return stack;
 }
-
-const runStep = (it, step, prevResult) => {
-  if (step.error) {
-    try {
-      return it.throw(step.error);
-    } catch (error) {
-      return {
-        errorThrown: error,
-      };
-    }
-  }
-
-  return it.next(prevResult);
-}
-
-const runAssertions = (step, output) => {
-  if (step.expectedThrow) {
-    assert.deepEqual(output.errorThrown, step.error);
-  } else if (output.errorThrown) {
-    throw output.errorThrown;
-  }
-
-  if (step.expectedDone) {
-    assert.equal(output.done, true);
-  }
-
-  if (step.expectedValue) {
-    assert.deepEqual(output.value, step.expectedValue);
-  }
-};
-
-const throwExtraStep = (step) => {
-  throw new Error({
-    message: 'Too many steps were provided for the generator',
-    failedOnStep: step,
-  });
-};

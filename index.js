@@ -1,5 +1,10 @@
 const StepManager = require('./step-manager');
+const assert = require('assert-diff');
 
-module.exports = function expectGen(iterator, ...args) {
-  return new StepManager(iterator, args);
+module.exports = function expectGen(generator, ...args) {
+  return new StepManager({
+    generator,
+    args,
+    deepEqual: assert.deepEqual,
+  });
 }
