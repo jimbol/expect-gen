@@ -1,7 +1,7 @@
 const { put } = require('redux-saga/effects');
 const assert = require('assert-diff');
 const StepManager = require('../step-manager');
-
+const { deepEqual } = assert;
 function startLoading(ids) {
   return {
     payload: ids,
@@ -26,7 +26,11 @@ describe('StepManager', () => {
   beforeEach(() => {
     ids = [1, 2, 3];
     args = [ids];
-    stepManager = new StepManager(myEffect, args);
+    stepManager = new StepManager({
+      generator: myEffect,
+      args,
+      deepEqual,
+    });
   });
 
   it('stores args arguments', () => {
@@ -49,13 +53,6 @@ describe('StepManager', () => {
       it('adds step with an expectedValue and a result', () => {
         expect(stepManager.steps.length).toEqual(1);
         expect(stepManager.steps[0].expectedValue).toBe(yieldedVal);
-      });
-
-      it('calls assert on run', () => {
-        const assertSpy = spyOn(assert, 'deepEqual');
-
-        stepManager.run();
-        expect(assertSpy).toHaveBeenCalled();
       });
     });
 
@@ -80,7 +77,11 @@ describe('StepManager', () => {
     beforeEach(() => {
       ids = [1, 2, 3];
       args = [ids];
-      stepManager = new StepManager(myEffect2, args)
+      stepManager = new StepManager({
+        generator: myEffect2,
+        args,
+        deepEqual,
+      })
         .next('123');
     });
 
@@ -117,7 +118,11 @@ describe('StepManager', () => {
 
     describe('#catches', () => {
       beforeEach(() => {
-        stepManager = new StepManager(errEffect, args)
+        stepManager = new StepManager({
+          generator: errEffect,
+          args,
+          deepEqual,
+        })
           .next()
           .catches(myError, 'CAUGHT');
       });
@@ -146,7 +151,11 @@ describe('StepManager', () => {
       };
 
       beforeEach(() => {
-        stepManager = new StepManager(errFinishEffect, args)
+        stepManager = new StepManager({
+          generator: errFinishEffect,
+          args,
+          deepEqual,
+        })
           .next()
           .catchesAndFinishes(myError, 'CAUGHT');
       });
@@ -164,7 +173,11 @@ describe('StepManager', () => {
 
     describe('#throws', () => {
       beforeEach(() => {
-        stepManager = new StepManager(myEffect, args)
+        stepManager = new StepManager({
+          generator: myEffect,
+          args,
+          deepEqual,
+        })
           .next()
           .throws(myError);
       });
@@ -185,7 +198,11 @@ describe('StepManager', () => {
     beforeEach(() => {
       ids = [1, 2, 3];
       args = [ids];
-      stepManager = new StepManager(myEffect2, args)
+      stepManager = new StepManager({
+        generator: myEffect2,
+        args,
+        deepEqual,
+      })
         .next('123')
         .finishes('123');
     });
@@ -196,7 +213,11 @@ describe('StepManager', () => {
     });
 
     it('fails assertion when generator not complete', () => {
-      stepManager = new StepManager(myEffect2, args)
+      stepManager = new StepManager({
+        generator: myEffect2,
+        args,
+        deepEqual,
+      })
         .finishes('123');
       expect(() => stepManager.run()).toThrow();
     });
@@ -204,7 +225,11 @@ describe('StepManager', () => {
 
   describe('when more steps are expected but generator is done', () => {
     it('throws', () => {
-      stepManager = new StepManager(myEffect2, args)
+      stepManager = new StepManager({
+        generator: myEffect2,
+        args,
+        deepEqual,
+      })
         .next()
         .next()
         .next();

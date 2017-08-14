@@ -1,8 +1,8 @@
-const assert = require('assert-diff');
 module.exports = class Runner {
-  constructor(it, steps) {
+  constructor(it, steps, deepEqual) {
     this.it = it;
     this.steps = steps;
+    this.deepEqual = deepEqual;
     this.results = [];
     this.isDone = false;
   }
@@ -16,9 +16,9 @@ module.exports = class Runner {
       let output;
       try {
         output = runStep(it, step, prevResult);
-        runAssertions(step, output);
+        runAssertions(step, output, this.deepEqual);
       } catch (err) {
-        err.message = `${err.message}\n${step.stack}`
+        err.stack = `\n\nStack:\n${step.stack}`;
         throw err;
       }
 
@@ -46,9 +46,9 @@ const runStep = (it, step, prevResult) => {
   return it.next(prevResult);
 }
 
-const runAssertions = (step, output) => {
+const runAssertions = (step, output, deepEqual) => {
   if (step.expectedThrow) {
-    assert.deepEqual(output.errorThrown, step.error);
+    deepEqual(output.errorThrown, step.error);
   } else if (output.errorThrown) {
     throw output.errorThrown;
   }
@@ -58,7 +58,7 @@ const runAssertions = (step, output) => {
   }
 
   if (step.expectedValue) {
-    assert.deepEqual(output.value, step.expectedValue);
+    deepEqual(output.value, step.expectedValue);
   }
 };
 

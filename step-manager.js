@@ -1,12 +1,17 @@
 const Runner = require('./runner');
 
 module.exports = class StepManager {
-  constructor(generator, args) {
+  constructor({
+    generator,
+    args,
+    deepEqual,
+  }) {
     if (!generator) {
       throw new Error(`ExpectGen requires an generator, passed in ${generator}`);
     }
 
     this.generator = generator;
+    this.deepEqual = deepEqual;
     this.args = args;
     this.steps = [];
   }
@@ -72,7 +77,7 @@ module.exports = class StepManager {
 
   run(context = null) {
     const it = this.generator.apply(context, this.args);
-    const runner = new Runner(it, this.steps);
+    const runner = new Runner(it, this.steps, this.deepEqual);
     return runner.run();
   }
 
