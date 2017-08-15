@@ -127,6 +127,12 @@ expectGen(generator, [...args])
 ```
 - Convert results from `run()` into a JSON object
 
+## Roadmap
+### v1.0.0
+- [ ] Allow custom assertion libraries - https://github.com/jimbol/expect-gen/issues/7
+- [ ] Allow annotations to be added to assertions - https://github.com/jimbol/expect-gen/issues/1
+- [ ] Add `assert` method - https://github.com/jimbol/expect-gen/issues/20
+
+
 ## Previous Version
 Expect Gen is a second generation version of [generator-test-runner](https://github.com/jimbol/generator-test-runner).  Many of the concepts used here originated there.
-
