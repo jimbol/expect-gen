@@ -128,10 +128,12 @@ expectGen(generator, [...args])
 - Convert results from `run()` into a JSON object
 
 ## Roadmap
+Expect Gen is heading towards v1. The following items still need to go in before then. Please open issues for other v1 requirements you find.
+
 ### v1.0.0
-- [ ] Allow custom assertion libraries - https://github.com/jimbol/expect-gen/issues/7
-- [ ] Allow annotations to be added to assertions - https://github.com/jimbol/expect-gen/issues/1
-- [ ] Add `assert` method - https://github.com/jimbol/expect-gen/issues/20
+- [ ] [Allow custom assertion libraries](https://github.com/jimbol/expect-gen/issues/7)
+- [ ] [Allow annotations to be added to assertions](https://github.com/jimbol/expect-gen/issues/1)
+- [ ] [Add `assert` method](https://github.com/jimbol/expect-gen/issues/20)
 
 
 ## Previous Version
