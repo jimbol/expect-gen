@@ -18,7 +18,7 @@ module.exports = class Runner {
         output = runStep(it, step, prevResult);
         runAssertions(step, output, this.deepEqual);
       } catch (err) {
-        err.stack = `\n\nStack:\n${step.stack}`;
+        err.stack = `${err.message}\n${step.stack}`;
         throw err;
       }
 

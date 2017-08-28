@@ -233,6 +233,7 @@ describe('StepManager', () => {
         .next()
         .next()
         .next();
+
       expect(() => stepManager.run()).toThrowErrorMatchingSnapshot();
     });
   });
