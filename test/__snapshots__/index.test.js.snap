@@ -5,6 +5,7 @@ Array [
   Object {
     "done": false,
     "value": Object {
+      "@@redux-saga/IO": true,
       "PUT": Object {
         "action": Object {
           "type": "LOADING",
