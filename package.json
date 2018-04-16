@@ -1,6 +1,6 @@
 {
   "name": "expect-gen",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Assertion library for unit testing JS generators. Works well with redux-saga. Allows snapshot testing.",
   "devDependencies": {
     "jest": "^19.0.2",
