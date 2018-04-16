@@ -48,7 +48,7 @@ const runStep = (it, step, prevResult) => {
 
 const runAssertions = (step, output, deepEqual) => {
   if (step.expectedThrow) {
-    deepEqual(output.errorThrown, step.error);
+    deepEqual(step.error, output.errorThrown);
   } else if (output.errorThrown) {
     throw output.errorThrown;
   }
@@ -58,7 +58,7 @@ const runAssertions = (step, output, deepEqual) => {
   }
 
   if (step.expectedValue) {
-    deepEqual(output.value, step.expectedValue);
+    deepEqual(step.expectedValue, output.value);
   }
 };
 
